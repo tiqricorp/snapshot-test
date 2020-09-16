@@ -4,5 +4,5 @@
 @Library('cals@hst') _
 
 simpleMavenLibPipeline(
-  dockerBuildImage: toolImageDockerReference('maven:3-jdk-11-alpine')
+  dockerBuildImage: toolImageDockerReference('maven:3-jdk-11-debian')
 )
