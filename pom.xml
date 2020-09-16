@@ -26,9 +26,9 @@
   </properties>
 
   <scm>
-    <developerConnection>scm:git:https://github.com/capralifecycle/snapshot-utils.git</developerConnection>
-    <connection>scm:git:https://github.com/capralifecycle/snapshot-utils.git</connection>
-    <url>https://github.com/capralifecycle/snapshot-utils</url>
+    <developerConnection>scm:git:https://github.com/capralifecycle/snapshot-test.git</developerConnection>
+    <connection>scm:git:https://github.com/capralifecycle/snapshot-test.git</connection>
+    <url>https://github.com/capralifecycle/snapshot-test</url>
     <tag>HEAD</tag>
   </scm>
 
