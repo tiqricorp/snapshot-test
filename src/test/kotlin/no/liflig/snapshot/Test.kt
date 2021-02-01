@@ -31,7 +31,7 @@ class Test {
   }
 
   @Test
-  fun testJsonWithIgnoredFieldsSnapshot() {
+  fun testJsonWithIgnoredPathSnapshot() {
     val element = buildJsonObject {
       put(
         "a",
@@ -43,7 +43,7 @@ class Test {
       put("b", 1234)
     }
     verifyJsonSnapshot(
-      "JsonWithIgnoredFields.json",
+      "JsonWithIgnoredPath.json",
       element,
       listOf("a.timestamp")
     )

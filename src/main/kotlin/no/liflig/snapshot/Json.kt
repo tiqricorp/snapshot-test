@@ -20,14 +20,11 @@ private fun produceJsonErrors(previous: String, current: String): String {
 /**
  * Ensure that the serialized JSON matches an existing snapshot.
  */
-fun verifyJsonSnapshot(name: String, value: JsonElement, ignoredValues: List<String>? = null) {
+fun verifyJsonSnapshot(name: String, value: JsonElement, ignoredPaths: List<String>? = null) {
   val prettified = json.encodeToString(JsonElement.serializer(), value) + "\n"
-  verifyStringSnapshot(
-    name,
-    prettified,
-    ::produceJsonErrors,
-    ignoredValues
-  )
+  verifySnapshot(name, prettified, ::produceJsonErrors) { existingValue: String, newValue: String ->
+    assertJsonSnapshot(existingValue, newValue, ignoredPaths)
+  }
 }
 
 /**
