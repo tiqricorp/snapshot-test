@@ -3,7 +3,9 @@ package no.liflig.snapshot
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.junit.Test
+import java.time.Instant
 
 class Test {
 
@@ -25,6 +27,25 @@ class Test {
           }
         )
       }
+    )
+  }
+
+  @Test
+  fun testJsonWithIgnoredFieldsSnapshot() {
+    val element = buildJsonObject {
+      put(
+        "a",
+        buildJsonObject {
+          put("name", "dev developersen")
+          put("timestamp", Instant.now().toString())
+        }
+      )
+      put("b", 1234)
+    }
+    verifyJsonSnapshot(
+      "JsonWithIgnoredFields.json",
+      element,
+      listOf("a.timestamp")
     )
   }
 }

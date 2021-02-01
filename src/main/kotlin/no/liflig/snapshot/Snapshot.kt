@@ -2,6 +2,10 @@ package no.liflig.snapshot
 
 import com.github.difflib.DiffUtils
 import com.github.difflib.UnifiedDiffUtils
+import org.skyscreamer.jsonassert.Customization
+import org.skyscreamer.jsonassert.JSONAssert
+import org.skyscreamer.jsonassert.JSONCompareMode
+import org.skyscreamer.jsonassert.comparator.CustomComparator
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -44,7 +48,8 @@ private fun createDiff(
 fun verifyStringSnapshot(
   name: String,
   value: String,
-  getExtra: ((previous: String, current: String) -> String?)? = null
+  getExtra: ((previous: String, current: String) -> String?)? = null,
+  ignoredValues: List<String>? = null
 ) {
   checkExpectedWorkingDirectory()
 
@@ -72,7 +77,20 @@ fun verifyStringSnapshot(
 
   val existingValue = resource.readText()
   try {
-    assertEquals(existingValue, value)
+    if (ignoredValues != null) {
+      JSONAssert.assertEquals(
+        existingValue,
+        value,
+        CustomComparator(
+          JSONCompareMode.STRICT,
+          *ignoredValues
+            .map { Customization(it) { o1: Any?, o2: Any? -> o2 != null } }
+            .toTypedArray()
+        )
+      )
+    } else {
+      assertEquals(existingValue, value)
+    }
   } catch (e: AssertionError) {
     val diff = createDiff(existingValue.lines(), value.lines())
 
