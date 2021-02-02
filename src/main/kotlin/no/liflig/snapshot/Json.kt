@@ -31,6 +31,6 @@ fun verifyJsonSnapshot(name: String, value: JsonElement, ignoredPaths: List<Stri
  * Verify that the value matches the snapshot. The value must be a valid JSON string
  * and will be reformatted. Use [verifyStringSnapshot] to check for whitespace.
  */
-fun verifyJsonSnapshot(name: String, value: String) {
-  verifyJsonSnapshot(name, json.parseToJsonElement(value))
+fun verifyJsonSnapshot(name: String, value: String, ignoredPaths: List<String>? = null) {
+  verifyJsonSnapshot(name, json.parseToJsonElement(value), ignoredPaths)
 }
