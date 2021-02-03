@@ -1,3 +1,4 @@
+@file:JvmName("StringSnapshot")
 package no.liflig.snapshot
 
 import com.github.difflib.DiffUtils
@@ -45,6 +46,7 @@ private fun createDiff(
  *
  * The [getExtra] parameter is for local library usage.
  */
+@JvmOverloads
 fun verifyStringSnapshot(
   name: String,
   value: String,
