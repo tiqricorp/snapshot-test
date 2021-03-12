@@ -58,7 +58,7 @@ fun verifyStringSnapshot(
 }
 
 internal fun assertJsonSnapshot(existingValue: String, newValue: String, ignoredPaths: List<String>? = null) {
-  val compareMode = JSONCompareMode.STRICT_ORDER
+  val compareMode = JSONCompareMode.STRICT
   if (ignoredPaths != null) {
     JSONAssert.assertEquals(
       existingValue,
