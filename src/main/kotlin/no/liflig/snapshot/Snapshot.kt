@@ -10,7 +10,7 @@ import org.skyscreamer.jsonassert.comparator.CustomComparator
 import java.io.File
 import kotlin.test.assertEquals
 
-private const val REGENERATE_DIFF_SNAPSHOTS = "REGENERATE_DIFF_SNAPSHOTS"
+private const val REGENERATE_SNAPSHOTS = "REGENERATE_SNAPSHOTS"
 private const val REGENERATE_FAILED_SNAPSHOTS = "REGENERATE_FAILED_SNAPSHOTS"
 
 /**
@@ -27,7 +27,7 @@ private fun checkExpectedWorkingDirectory() {
 }
 
 private fun shouldRegenerateDiffs(): Boolean =
-  System.getProperty(REGENERATE_DIFF_SNAPSHOTS)?.toBoolean() ?: false
+  System.getProperty(REGENERATE_SNAPSHOTS)?.toBoolean() ?: false
 
 private fun shouldRegenerateFailed(): Boolean =
   System.getProperty(REGENERATE_FAILED_SNAPSHOTS)?.toBoolean() ?: false
@@ -94,37 +94,35 @@ internal fun verifySnapshot(
   val resource = File("src/test/resources/__snapshots__", name)
   resource.parentFile.mkdirs()
 
-  println("REGENERATE_ALL_SNAPSHOTS ${shouldRegenerateDiffs()}")
-  println("REGENERATE_FAILED_SNAPSHOTS ${shouldRegenerateFailed()}")
-
   val snapshotExists = resource.exists()
 
-  if (!snapshotExists) {
-    println("[INFO] Snapshot for [$name] does not exist, creating")
-    resource.writeText(value)
-  } else if (shouldRegenerateDiffs()) {
+  if (!snapshotExists || shouldRegenerateDiffs() || shouldRegenerateFailed()) {
+    if (!snapshotExists) {
+      println("[INFO] Snapshot for [$name] does not exist, creating")
+      resource.writeText(value)
+    } else if (shouldRegenerateDiffs()) {
 
-    val existingValue = resource.readText()
-    if (existingValue == value) {
-      // Existing snapshot OK.
-      return
-    } else {
-      println("[INFO] Snapshot for [$name] does not match, regenerating")
-      resource.writeText(value)
+      val existingValue = resource.readText()
+      if (existingValue == value) {
+        println("[INFO] Existing snapshot for [$name] OK.")
+      } else {
+        println("[INFO] Snapshot for [$name] does not match, regenerating")
+        resource.writeText(value)
+      }
+    } else if (shouldRegenerateFailed()) {
+
+      val existingValue = resource.readText()
+      try {
+        assertSnapshot(existingValue, value)
+        println("[INFO] Existing snapshot for [$name] OK.")
+      } catch (e: AssertionError) {
+        println("[INFO] Snapshot for [$name] not OK, regenerating")
+        resource.writeText(value)
+      }
     }
-  } else if (shouldRegenerateFailed()) {
-    val existingValue = resource.readText()
-    try {
-      assertSnapshot(existingValue, value)
-      // existing snapshot OK
-      return
-    } catch (e: AssertionError) {
-      resource.writeText(value)
-      println("[INFO] Snapshot for [$name] does not match, regenerating")
-      return
-    }
+    
+    return
   }
-
   val existingValue = resource.readText()
   try {
     assertSnapshot(existingValue, value)
@@ -139,8 +137,8 @@ internal fun verifySnapshot(
       """
 #####################################################################
 
-Snapshot [$name] failed - recreate snapshots with diffs by setting system property $REGENERATE_DIFF_SNAPSHOTS to true
-Example: mvn test -DREGENERATE_DIFF_SNAPSHOTS=true
+Snapshot [$name] failed - recreate snapshots with diffs by setting system property $REGENERATE_SNAPSHOTS to true
+Example: mvn test -DREGENERATE_SNAPSHOTS=true
 To only regenerate failed snapshots, set $REGENERATE_FAILED_SNAPSHOTS to true instead
 Example: mvn test -DREGENERATE_FAILED_SNAPSHOTS=true
 
