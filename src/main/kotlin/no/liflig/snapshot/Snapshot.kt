@@ -120,7 +120,6 @@ internal fun verifySnapshot(
         resource.writeText(value)
       }
     }
-    
     return
   }
   val existingValue = resource.readText()
