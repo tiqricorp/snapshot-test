@@ -101,7 +101,6 @@ internal fun verifySnapshot(
       println("[INFO] Snapshot for [$name] does not exist, creating")
       resource.writeText(value)
     } else if (shouldRegenerateDiffs()) {
-
       val existingValue = resource.readText()
       if (existingValue == value) {
         println("[INFO] Existing snapshot for [$name] OK.")
