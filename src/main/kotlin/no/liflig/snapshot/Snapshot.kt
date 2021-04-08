@@ -11,6 +11,7 @@ import java.io.File
 import kotlin.test.assertEquals
 
 private const val REGENERATE_SNAPSHOTS = "REGENERATE_SNAPSHOTS"
+private const val REGENERATE_FAILED_SNAPSHOTS = "REGENERATE_FAILED_SNAPSHOTS"
 
 /**
  * Check that we are running using the expected working directory.
@@ -25,8 +26,11 @@ private fun checkExpectedWorkingDirectory() {
   }
 }
 
-private fun shouldRegenerate(): Boolean =
+private fun shouldRegenerateAll(): Boolean =
   System.getProperty(REGENERATE_SNAPSHOTS)?.toBoolean() ?: false
+
+private fun shouldRegenerateFailed(): Boolean =
+  System.getProperty(REGENERATE_FAILED_SNAPSHOTS)?.toBoolean() ?: false
 
 private fun createDiff(
   original: List<String>,
@@ -92,23 +96,30 @@ internal fun verifySnapshot(
 
   val snapshotExists = resource.exists()
 
-  if (!snapshotExists || shouldRegenerate()) {
-    if (snapshotExists) {
+  if (!snapshotExists || shouldRegenerateAll() || shouldRegenerateFailed()) {
+    if (!snapshotExists) {
+      println("[INFO] Snapshot for [$name] does not exist, creating")
+      resource.writeText(value)
+    } else if (shouldRegenerateAll()) {
       val existingValue = resource.readText()
       if (existingValue == value) {
-        // Existing snapshot OK.
-        return
+        println("[INFO] Existing snapshot for [$name] OK.")
+      } else {
+        println("[INFO] Snapshot for [$name] does not match, regenerating")
+        resource.writeText(value)
       }
-
-      println("[INFO] Snapshot for [$name] does not match, regenerating")
-    } else {
-      println("[INFO] Created initial snapshot for [$name]")
+    } else if (shouldRegenerateFailed()) {
+      val existingValue = resource.readText()
+      try {
+        assertSnapshot(existingValue, value)
+        println("[INFO] Existing snapshot for [$name] OK.")
+      } catch (e: AssertionError) {
+        println("[INFO] Snapshot for [$name] not OK, regenerating")
+        resource.writeText(value)
+      }
     }
-
-    resource.writeText(value)
     return
   }
-
   val existingValue = resource.readText()
   try {
     assertSnapshot(existingValue, value)
@@ -123,8 +134,10 @@ internal fun verifySnapshot(
       """
 #####################################################################
 
-Snapshot [$name] failed - recreate by setting system property $REGENERATE_SNAPSHOTS to true
+Snapshot [$name] failed - recreate all snapshots by setting system property $REGENERATE_SNAPSHOTS to true
 Example: mvn test -DREGENERATE_SNAPSHOTS=true
+Only recreate failed snapshots by setting system property $REGENERATE_FAILED_SNAPSHOTS to true instead
+Example: mvn test -DREGENERATE_FAILED_SNAPSHOTS=true
 
 ${extra}Diff:
 
