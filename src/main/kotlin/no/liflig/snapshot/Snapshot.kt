@@ -109,7 +109,6 @@ internal fun verifySnapshot(
         resource.writeText(value)
       }
     } else if (shouldRegenerateFailed()) {
-
       val existingValue = resource.readText()
       try {
         assertSnapshot(existingValue, value)
