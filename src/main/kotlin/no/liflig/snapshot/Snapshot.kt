@@ -96,31 +96,35 @@ internal fun verifySnapshot(
 
   val snapshotExists = resource.exists()
 
-  if (!snapshotExists || shouldRegenerateAll() || shouldRegenerateFailed()) {
-    if (!snapshotExists) {
-      println("[INFO] Snapshot for [$name] does not exist, creating")
+  if (!snapshotExists) {
+    println("[INFO] Snapshot for [$name] does not exist, creating")
+    resource.writeText(value)
+    return
+  }
+
+  val existingValue = resource.readText()
+
+  if (shouldRegenerateAll()) {
+    if (existingValue == value) {
+      println("[INFO] Existing snapshot for [$name] OK.")
+    } else {
+      println("[INFO] Snapshot for [$name] does not match, regenerating")
       resource.writeText(value)
-    } else if (shouldRegenerateAll()) {
-      val existingValue = resource.readText()
-      if (existingValue == value) {
-        println("[INFO] Existing snapshot for [$name] OK.")
-      } else {
-        println("[INFO] Snapshot for [$name] does not match, regenerating")
-        resource.writeText(value)
-      }
-    } else if (shouldRegenerateFailed()) {
-      val existingValue = resource.readText()
-      try {
-        assertSnapshot(existingValue, value)
-        println("[INFO] Existing snapshot for [$name] OK.")
-      } catch (e: AssertionError) {
-        println("[INFO] Snapshot for [$name] not OK, regenerating")
-        resource.writeText(value)
-      }
     }
     return
   }
-  val existingValue = resource.readText()
+
+  if (shouldRegenerateFailed()) {
+    try {
+      assertSnapshot(existingValue, value)
+      println("[INFO] Existing snapshot for [$name] OK.")
+    } catch (e: AssertionError) {
+      println("[INFO] Snapshot for [$name] not OK, regenerating")
+      resource.writeText(value)
+    }
+    return
+  }
+
   try {
     assertSnapshot(existingValue, value)
   } catch (e: AssertionError) {
@@ -146,6 +150,7 @@ $diff
 #####################################################################
       """.trimIndent()
     )
+
     throw AssertionError("Snapshot [$name] doesn't match")
   }
 }
