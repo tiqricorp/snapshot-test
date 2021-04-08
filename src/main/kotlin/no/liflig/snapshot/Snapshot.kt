@@ -26,7 +26,7 @@ private fun checkExpectedWorkingDirectory() {
   }
 }
 
-private fun shouldRegenerateDiffs(): Boolean =
+private fun shouldRegenerateAll(): Boolean =
   System.getProperty(REGENERATE_SNAPSHOTS)?.toBoolean() ?: false
 
 private fun shouldRegenerateFailed(): Boolean =
@@ -96,11 +96,12 @@ internal fun verifySnapshot(
 
   val snapshotExists = resource.exists()
 
-  if (!snapshotExists || shouldRegenerateDiffs() || shouldRegenerateFailed()) {
+  if (!snapshotExists || shouldRegenerateAll() || shouldRegenerateFailed()) {
     if (!snapshotExists) {
       println("[INFO] Snapshot for [$name] does not exist, creating")
       resource.writeText(value)
-    } else if (shouldRegenerateDiffs()) {
+
+    } else if (shouldRegenerateAll()) {
       val existingValue = resource.readText()
       if (existingValue == value) {
         println("[INFO] Existing snapshot for [$name] OK.")
@@ -108,6 +109,7 @@ internal fun verifySnapshot(
         println("[INFO] Snapshot for [$name] does not match, regenerating")
         resource.writeText(value)
       }
+
     } else if (shouldRegenerateFailed()) {
       val existingValue = resource.readText()
       try {
