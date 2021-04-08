@@ -100,7 +100,6 @@ internal fun verifySnapshot(
     if (!snapshotExists) {
       println("[INFO] Snapshot for [$name] does not exist, creating")
       resource.writeText(value)
-
     } else if (shouldRegenerateAll()) {
       val existingValue = resource.readText()
       if (existingValue == value) {
@@ -109,7 +108,6 @@ internal fun verifySnapshot(
         println("[INFO] Snapshot for [$name] does not match, regenerating")
         resource.writeText(value)
       }
-
     } else if (shouldRegenerateFailed()) {
       val existingValue = resource.readText()
       try {
