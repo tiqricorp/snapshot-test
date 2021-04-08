@@ -136,9 +136,9 @@ internal fun verifySnapshot(
       """
 #####################################################################
 
-Snapshot [$name] failed - recreate snapshots with diffs by setting system property $REGENERATE_SNAPSHOTS to true
+Snapshot [$name] failed - recreate all snapshots by setting system property $REGENERATE_SNAPSHOTS to true
 Example: mvn test -DREGENERATE_SNAPSHOTS=true
-To only regenerate failed snapshots, set $REGENERATE_FAILED_SNAPSHOTS to true instead
+Only recreate failed snapshots by setting system property $REGENERATE_FAILED_SNAPSHOTS to true instead
 Example: mvn test -DREGENERATE_FAILED_SNAPSHOTS=true
 
 ${extra}Diff:
