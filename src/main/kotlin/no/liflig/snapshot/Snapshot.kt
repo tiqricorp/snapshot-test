@@ -6,8 +6,8 @@ import com.github.difflib.UnifiedDiffUtils
 import java.io.File
 import kotlin.test.assertEquals
 
-private const val REGENERATE_SNAPSHOTS = "REGENERATE_SNAPSHOTS"
-private const val REGENERATE_FAILED_SNAPSHOTS = "REGENERATE_FAILED_SNAPSHOTS"
+internal const val REGENERATE_SNAPSHOTS = "REGENERATE_SNAPSHOTS"
+internal const val REGENERATE_FAILED_SNAPSHOTS = "REGENERATE_FAILED_SNAPSHOTS"
 
 /**
  * Check that we are running using the expected working directory.
@@ -34,7 +34,9 @@ private fun createDiff(
 ): String {
   val patch = DiffUtils.diff(original, new)
   val diff = UnifiedDiffUtils.generateUnifiedDiff(null, null, original, patch, 10)
-  return diff.drop(3).joinToString("\n")
+  // Remove "diff header" and replace lines with only whitespace with empty lines
+  // to make it easier to check in tests.
+  return diff.drop(3).joinToString("\n") { it.ifBlank { "" } }
 }
 
 /**
