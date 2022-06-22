@@ -37,10 +37,6 @@
       <id>capra-releases</id>
       <url>https://mvnrepo.capraconsulting.no/content/repositories/capra-releases</url>
     </repository>
-    <snapshotRepository>
-      <id>capra-snapshots</id>
-      <url>https://mvnrepo.capraconsulting.no/content/repositories/capra-snapshots</url>
-    </snapshotRepository>
   </distributionManagement>
 
   <dependencies>
