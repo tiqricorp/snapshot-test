@@ -9,6 +9,7 @@ insert_final_newline = true
 indent_style = space
 indent_size = 2
 trim_trailing_whitespace = true
+ij_kotlin_allow_trailing_comma = true
 
 [*.md]
 # Markdown uses double trailing whitespaces as special chars to force newlines

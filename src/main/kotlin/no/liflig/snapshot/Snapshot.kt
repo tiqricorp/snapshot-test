@@ -1,4 +1,5 @@
 @file:JvmName("StringSnapshot")
+
 package no.liflig.snapshot
 
 import com.github.difflib.DiffUtils
@@ -30,7 +31,7 @@ private val shouldRegenerateFailed: Boolean
 
 private fun createDiff(
   original: List<String>,
-  new: List<String>
+  new: List<String>,
 ): String {
   val patch = DiffUtils.diff(original, new)
   val diff = UnifiedDiffUtils.generateUnifiedDiff(null, null, original, patch, 10)
