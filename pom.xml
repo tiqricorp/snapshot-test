@@ -29,7 +29,7 @@
     <repository>
       <id>github</id>
       <name>GitHub tiqricrop Apache Maven Packages</name>
-      <url>https://maven.pkg.github.com/tiqricrop/snapshot-test</url>
+      <url>https://maven.pkg.github.com/tiqricorp/snapshot-test</url>
     </repository>
   </distributionManagement>
 
