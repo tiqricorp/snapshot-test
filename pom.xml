@@ -25,17 +25,11 @@
     <kotlinx-serialization.version>1.2.2</kotlinx-serialization.version>
   </properties>
 
-  <scm>
-    <developerConnection>scm:git:https://github.com/capralifecycle/snapshot-test.git</developerConnection>
-    <connection>scm:git:https://github.com/capralifecycle/snapshot-test.git</connection>
-    <url>https://github.com/capralifecycle/snapshot-test</url>
-    <tag>HEAD</tag>
-  </scm>
-
   <distributionManagement>
     <repository>
-      <id>capra-releases</id>
-      <url>https://mvnrepo.capraconsulting.no/content/repositories/capra-releases</url>
+      <id>github</id>
+      <name>GitHub tiqricrop Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/tiqricrop/snapshot-test</url>
     </repository>
   </distributionManagement>
 
